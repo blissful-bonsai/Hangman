@@ -42,79 +42,65 @@
         static void Main(string[] args)
         {
             initializeWord();
-            guessLetter();
+            guessWord();
         }
 
         static void initializeWord()
         {
             Random random = new Random();
             int randomIndex = random.Next(0, wordList.Length);
-
             fullWord = wordList[randomIndex];
             Console.WriteLine(fullWord);
             int fullWordLength = fullWord.Length;
             halfWord = new char[fullWord.Length];
+            for (int i = 0; i < halfWord.Length; i++)
+            {
+                halfWord[i] = '_'; // Initialize with underscores
+            }
+            Console.WriteLine(halfWord);
         }
 
-        static void guessLetter()
+        static void guessWord()
         {
-            Console.WriteLine("Please, try guessing a letter: ");
+            // While player has limbs or checkVictory is false
+            while (limbs != 0 && checkVictory() != true)
+            {
+                guessChar();
+            }
+        }
+
+        static void guessChar()
+        {
+            int correctGuesses = 0;
+            Console.WriteLine($"You have {limbs} limbs left");
+            Console.WriteLine($"You have guessed {correctGuesses} letters already!");
+            Console.WriteLine("What letter do you want to try?: ");
             char letter = char.Parse(Console.ReadLine());
-
-            checkLetter(fullWord, letter);
-        }
-        static void checkLetter(string word, char letter)
-        {
-            while (checkGame() != true)
+            if (fullWord.Contains(letter) == false)
+            {
+                limbs--;
+                if (limbs == 0)
+                {
+                    Console.WriteLine("You lost!");
+                }
+            }
+            else
             {
                 for (int i = 0; i < fullWord.Length; i++)
                 {
-                    if (word[i] == letter)
+                    if (fullWord[i] == letter)
                     {
-                        Console.WriteLine("You did it!");
                         halfWord[i] = letter;
-                    }
-                    else
-                    {
-                        limbs--;
+                        Console.WriteLine(halfWord);
                     }
                 }
-                Console.WriteLine(halfWord);
             }
-
         }
 
         static bool checkVictory()
         {
-            for (int i = 0; i < halfWord.Length; i++)
-            {
-                if (halfWord[i] == '\0')
-                {
-                    return false;
-                }
-            }
-            return true;
+            return fullWord.Equals(new string(halfWord));
         }
-
-        static bool checkLoss()
-        {
-            if (limbs == 0)
-            {
-                Console.WriteLine("All of your limbs have been drawn using pixels, you are a goner!");
-                return true;
-            }
-            return false;
-        }
-
-        static bool checkGame()
-        {
-            if (checkVictory() || checkLoss())
-            {
-                return true;
-            }
-            return false;
-        }
-
 
     }
 }
